@@ -1,6 +1,6 @@
 package Graph::Centrality::Pagerank;
 
-require 5.6.0;
+require 5.006_000;
 use strict;
 use warnings;
 use Graph;
@@ -9,7 +9,7 @@ use Graph;
 BEGIN {
     use Exporter ();
     use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
-    $VERSION     = '1.0';
+    $VERSION     = '1.01';
     @ISA         = qw(Exporter);
     @EXPORT      = qw();
     @EXPORT_OK   = qw();
@@ -65,7 +65,7 @@ by C<1 - dampeningFactor>.
  maxRelError => sqrt (machine-epsilon)
 
 C<maxRelError> is the maximum I<average> relative error that is permitted between
-successive pagerank vectors before the iterative process to compute the vectors
+successive pagerank vectors before the iterative process to approximate the pagerank vector
 should be stopped. The default is the square root of the systems machine epsilon.
 Usually, most pagerank values computed will have C<-log10(maxRelError)> digits of accuracy.
 C<maxRelError> must be positive and less than or equal to 0.01.
@@ -261,7 +261,7 @@ keys are the graph nodes and the values are the pageranks of the node.
 
 C<graph> must be a L<Graph> object. If the C<directed> parameter was not set
 with the constructor C<new> or with this method, then C<directed>
-is set to the value of L<Graph>->is_directed().
+is set to the value of L<Graph>->L<Graph/"Accessors"|is_directed>().
 
 =item C<listOfEdges>
 
@@ -693,10 +693,18 @@ it and/or modify it under the same terms as Perl itself.
 The full text of the license can be found in the
 LICENSE file included with this module.
 
+=head1 KEYWORDS
+
+centrality measure, eigenvector, graph, network, pagerank
+
 =head1 SEE ALSO
 
-A good tutorial on the pagerank algorithm is the article
-I<How Google Finds Your Needle in the Web's Haystack> by David Austin.
+=begin html
+
+<p>A good tutorial on the <a href="http://en.wikipedia.org/wiki/PageRank">pagerank</a> algorithm is the article
+<a href="http://www.ams.org/featurecolumn/archive/pagerank.html">How Google Finds Your Needle in the Web's Haystack</a> by David Austin.</p>
+
+=end html
 
 L<Graph>
 

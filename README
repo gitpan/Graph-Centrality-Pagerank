@@ -41,10 +41,11 @@ CONSTRUCTOR
 
         "maxRelError" is the maximum *average* relative error that is
         permitted between successive pagerank vectors before the iterative
-        process to compute the vectors should be stopped. The default is the
-        square root of the systems machine epsilon. Usually, most pagerank
-        values computed will have "-log10(maxRelError)" digits of accuracy.
-        "maxRelError" must be positive and less than or equal to 0.01.
+        process to approximate the pagerank vector should be stopped. The
+        default is the square root of the systems machine epsilon. Usually,
+        most pagerank values computed will have "-log10(maxRelError)" digits
+        of accuracy. "maxRelError" must be positive and less than or equal
+        to 0.01.
 
     "minIterations"
          minIterations => 0
@@ -101,7 +102,7 @@ METHOD
 
         "graph" must be a Graph object. If the "directed" parameter was not
         set with the constructor "new" or with this method, then "directed"
-        is set to the value of Graph->is_directed().
+        is set to the value of Graph->Graph/"Accessors"().
 
     "listOfEdges"
          listOfEdges => [['a',10],[10,11]]
@@ -291,9 +292,9 @@ COPYRIGHT
     The full text of the license can be found in the LICENSE file included
     with this module.
 
-SEE ALSO
-    A good tutorial on the pagerank algorithm is the article *How Google
-    Finds Your Needle in the Web's Haystack* by David Austin.
+KEYWORDS
+    centrality measure, eigenvector, graph, network, pagerank
 
+SEE ALSO
     Graph
 

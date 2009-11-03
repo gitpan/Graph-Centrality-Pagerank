@@ -1,5 +1,5 @@
 
-require 5.6.0;
+require 5.006_000;
 use strict;
 use warnings;
 use Carp;
@@ -17,8 +17,10 @@ WriteMakefile(
     AUTHOR       => 'Jeff Kubina (jeff.kubina@gmail.com)',
     ABSTRACT     => 'Computes pagerank of all nodes in a graph.',
     PREREQ_PM    => {
+                     'Data::Dump' => '1.14',
                      'Graph' => '0.91',
                     },
+    LICENSE      => 'perl', 
 );
 __END__
 # Below are the automatically recommended values for PREREQ_PM.
