@@ -5,3 +5,6 @@ Revision history for Perl module Graph::Centrality::Pagerank
 
 1.01 2 Nov 2009
     - Minor improvements to the documentation.
+
+1.02 15 Nov 2009
+    - Minor improvements to the documentation.

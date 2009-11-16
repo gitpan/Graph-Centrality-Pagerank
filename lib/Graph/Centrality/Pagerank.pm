@@ -9,7 +9,7 @@ use Graph;
 BEGIN {
     use Exporter ();
     use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
-    $VERSION     = '1.01';
+    $VERSION     = '1.02';
     @ISA         = qw(Exporter);
     @EXPORT      = qw();
     @EXPORT_OK   = qw();
@@ -261,7 +261,7 @@ keys are the graph nodes and the values are the pageranks of the node.
 
 C<graph> must be a L<Graph> object. If the C<directed> parameter was not set
 with the constructor C<new> or with this method, then C<directed>
-is set to the value of L<Graph>->L<Graph/"Accessors"|is_directed>().
+is set to the value of L<Graph>->L<is_directed|Graph/Accessors>().
 
 =item C<listOfEdges>
 

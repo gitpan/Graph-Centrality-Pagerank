@@ -26,17 +26,17 @@ __END__
 # Below are the automatically recommended values for PREREQ_PM.
     PREREQ_PM    => {
                      # list of core modules used:
-                     'Carp' => '1.08',
+                     'Carp' => '1.11',
                      'strict' => '1.04',
-                     'Test::More' => '0.88',
+                     'Test::More' => '0.94',
                      'vars' => '1.01',
                      'warnings' => '1.06',
 
                      # list of installed modules used:
-                     'Data::Dump' => '1.14',
+                     'Data::Dump' => '1.15',
                      'Graph' => '0.91',
-                     'Graph::Centrality::Pagerank' => '1.0',
+                     'Graph::Centrality::Pagerank' => '1.02',
 
                      # list of unknown modules used:
-                     '5.6.0' => '0',
+                     '5.006_000' => '0',
                     },

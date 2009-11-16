@@ -102,7 +102,7 @@ METHOD
 
         "graph" must be a Graph object. If the "directed" parameter was not
         set with the constructor "new" or with this method, then "directed"
-        is set to the value of Graph->Graph/"Accessors"().
+        is set to the value of Graph->is_directed().
 
     "listOfEdges"
          listOfEdges => [['a',10],[10,11]]
