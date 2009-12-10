@@ -107,13 +107,33 @@ METHOD
     "listOfEdges"
          listOfEdges => [['a',10],[10,11]]
 
-        "listOfEdges" must point to a list of edges, where an edge is a pair
-        of strings of the form "[from-node, to-node]" or a triple of the
-        form "[from-node, to-node, numeric-edge-weight]". Note that "graph"
-        and "listOfEdges" can both be defined, in which case the union of
-        their list of edges is used to compute the pageranks of the nodes.
+        "listOfEdges" must be a list of edges, where an edge is a pair of
+        strings of the form "[from-node, to-node]" or a triple of the form
+        "[from-node, to-node, numeric-edge-weight]". Note that "graph" and
+        "listOfEdges" can both be defined, in which case the union of their
+        list of edges is used to compute the pageranks of the nodes.
+
+    "listOfNodes"
+         listOfNodes => ['a',10, 'b']
+
+        "listOfNodes" is optional but, must be the list of nodes in the
+        graph when provided; it defaults to all the nodes comprising the
+        edges in "listOfEdges".
 
 EXAMPLES
+    A rather dull example with one node and no edges:
+
+      use Graph;
+      use Graph::Centrality::Pagerank;
+      use Data::Dump qw(dump);
+      my $ranker = Graph::Centrality::Pagerank->new();
+      my $listOfNodes = [1];
+      dump $ranker->getPagerankOfNodes (listOfNodes => $listOfNodes);
+      # dumps:
+      # {
+      #   1 => 1
+      # }
+
     An example of a graph with two components:
 
       use Graph::Centrality::Pagerank;

@@ -6,6 +6,20 @@ use strict;
 use warnings;
 use Carp;
 
+# A rather dull example with one node and no edges:
+{
+  use Graph;
+  use Graph::Centrality::Pagerank;
+  use Data::Dump qw(dump);
+  my $ranker = Graph::Centrality::Pagerank->new();
+  my $listOfNodes = [1];
+  dump $ranker->getPagerankOfNodes (listOfNodes => $listOfNodes);
+  # dumps:
+  # {
+  #   1 => 1
+  # }
+}
+
 # A simple example with two disjoint edges:
 {
   use Graph;

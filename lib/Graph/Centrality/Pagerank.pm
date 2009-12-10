@@ -4,12 +4,12 @@ require 5.006_000;
 use strict;
 use warnings;
 use Graph;
-#use Data::Dump qw(dump);
+use Data::Dump qw(dump);
 
 BEGIN {
     use Exporter ();
     use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
-    $VERSION     = '1.02';
+    $VERSION     = '1.03';
     @ISA         = qw(Exporter);
     @EXPORT      = qw();
     @EXPORT_OK   = qw();
@@ -267,11 +267,18 @@ is set to the value of L<Graph>->L<is_directed|Graph/Accessors>().
 
  listOfEdges => [['a',10],[10,11]]
 
-C<listOfEdges> must point to a list of edges, where an edge is
+C<listOfEdges> must be a list of edges, where an edge is
 a pair of strings of the form C<[from-node, to-node]> or a triple of the
 form C<[from-node, to-node, numeric-edge-weight]>. Note that C<graph> and C<listOfEdges> can
 both be defined, in which case the union of their list of edges is used to compute the
 pageranks of the nodes.
+
+=item C<listOfNodes>
+
+ listOfNodes => ['a',10, 'b']
+
+C<listOfNodes> is optional but, must be the list of nodes in the graph when provided; 
+it defaults to all the nodes comprising the edges in C<listOfEdges>.
 
 =back
 
@@ -286,6 +293,7 @@ sub getPagerankOfNodes
 
   # get the list of edges from the graph.
   my @listOfEdges;
+  my @listOfNodes;
   if (exists ($Parameters{graph}))
   {
     # get the graph.
@@ -293,6 +301,9 @@ sub getPagerankOfNodes
 
     # get the list of graph edges.
     @listOfEdges = $graph->edges();
+
+    # get the list of vertices.
+    @listOfNodes = $graph->vertices();
 
     # get the graph edge weights if they are to be used and exist.
     if ($Parameters{useEdgeWeights})
@@ -305,13 +316,15 @@ sub getPagerankOfNodes
     }
   }
 
-  # add edges from the parameter listOfEdges; assumin g they are unique.
+  # add edges from the parameter listOfEdges; assuming they are unique.
   push @listOfEdges, @{$Parameters{listOfEdges}} if exists $Parameters{listOfEdges};
+  push @listOfNodes, @{$Parameters{listOfNodes}} if exists $Parameters{listOfNodes};
 
   return $Self->_getPageranksOfNodesFromEdgeList
     (
       %Parameters,
       listOfEdges => \@listOfEdges,
+      listOfNodes => \@listOfNodes
     );
 }
 
@@ -321,6 +334,10 @@ sub _getPageranksOfNodesFromEdgeList
 
   # get the list of edges which may have weights, default weight is 1.
   my $listOfEdges = $Parameters{listOfEdges};
+
+  # get the list of edges which may have weights, default weight is 1.
+  my $listOfNodes;
+  $listOfNodes = $Parameters{listOfNodes} if exists $Parameters{listOfNodes};
 
   # store the type of graph.
   my $directed = $Parameters{directed};
@@ -360,7 +377,7 @@ sub _getPageranksOfNodesFromEdgeList
       $columnSum{$to} = 0;
     }
   };
-
+  
   # convert the list of edges into a row oriented matrix.
   foreach my $edge (@$listOfEdges)
   {
@@ -372,6 +389,18 @@ sub _getPageranksOfNodesFromEdgeList
     # add the edge to the matrix of rows.
     &$addEdgeSub ($edge->[0], $edge->[1], $weight);
     &$addEdgeSub ($edge->[1], $edge->[0], $weight) unless ($directed);
+  }
+
+  # if $listOfNodes is defined, ensure any missing nodes are added.
+  if (defined $listOfNodes)
+  {
+    foreach my $node (@$listOfNodes)
+    {
+      unless (exists ($columnSum{$node}))
+      {
+        $columnSum{$node} = 0;
+      }    
+    }  
   }
 
   # normalize the column sums of the matrix and find all node sinks.
@@ -510,6 +539,19 @@ sub _getMachineEpsilon
 }
 
 =head1 EXAMPLES
+
+A rather dull example with one node and no edges:
+
+  use Graph;
+  use Graph::Centrality::Pagerank;
+  use Data::Dump qw(dump);
+  my $ranker = Graph::Centrality::Pagerank->new();
+  my $listOfNodes = [1];
+  dump $ranker->getPagerankOfNodes (listOfNodes => $listOfNodes);
+  # dumps:
+  # {
+  #   1 => 1
+  # }
 
 An example of a graph with two components:
 

@@ -26,7 +26,7 @@ __END__
 # Below are the automatically recommended values for PREREQ_PM.
     PREREQ_PM    => {
                      # list of core modules used:
-                     'Carp' => '1.11',
+                     'Carp' => '1.08',
                      'strict' => '1.04',
                      'Test::More' => '0.94',
                      'vars' => '1.01',

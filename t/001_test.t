@@ -1,12 +1,10 @@
 # -*- perl -*-
 
-# t/001_load.t - check module loading and create testing directory
-
 use strict;
 use warnings;
 #use Data::Dump qw(dump);
 
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 BEGIN { use_ok( 'Graph::Centrality::Pagerank' ); }
 
@@ -14,6 +12,7 @@ my $object = Graph::Centrality::Pagerank->new ();
 isa_ok ($object, 'Graph::Centrality::Pagerank');
 ok (testLoopGraphs(10), 'Testing pagerank of loop graphs.');
 ok (staticGraph1Test(), 'Testing static graph.');
+ok (testNoEdgesGraphs(10), 'Testing edgeless graphs.');
 
 # returns the average relative error between to vectors stored in a hash.
 sub getRelativeError
@@ -122,5 +121,29 @@ sub staticGraph1Test
   my $error = getRelativeError (\%trueRanks, $ranks);
   my $epsilon = sqrt _getMachineEpsilon ();
   return 0 if ($error > 10 * $epsilon);
+  return 1;
+}
+
+# test the ranks computed for graphs without edges.
+sub testNoEdgesGraphs
+{
+  my $TotalTests = shift;
+  $TotalTests = 1 unless defined $TotalTests;
+
+  my $ranker = Graph::Centrality::Pagerank->new();
+  my $epsilon = sqrt _getMachineEpsilon ();
+  {
+    for (my $test = 1; $test <= $TotalTests; $test++)
+    {
+      my $totalNodes = 1 + int abs rand 1000;
+      $totalNodes = 1 if ($test < 2);
+      my @listOfNodes = (1..$totalNodes);
+      my $ranks = $ranker->getPagerankOfNodes (listOfNodes => \@listOfNodes);
+      my %trueRanks = %$ranks;
+      foreach my $key (keys %trueRanks) { $trueRanks{$key} = 1/$totalNodes; }
+      my $error = getRelativeError (\%trueRanks, $ranks);
+      return 0 if ($error > 10 * $epsilon);
+    }
+  }
   return 1;
 }
