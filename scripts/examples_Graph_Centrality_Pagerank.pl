@@ -175,6 +175,30 @@ use Carp;
   # }
 }
 
+# An example of the effect of including node weights:
+{
+  use Graph;
+  use Graph::Centrality::Pagerank;
+  use Data::Dump qw(dump);
+  my $ranker = Graph::Centrality::Pagerank->new();
+  my $listOfEdges = [[1,2],[2,3]];
+  dump $ranker->getPagerankOfNodes (listOfEdges => $listOfEdges);
+  dump $ranker->getPagerankOfNodes (listOfEdges => $listOfEdges,
+    nodeWeights => {2 => .9, 3 => .1 });
+
+  # dumps:
+  # {
+  #   1 => "0.184416783248514",
+  #   2 => "0.341171047056969",
+  #   3 => "0.474412169694517",
+  # }
+  # {
+  #   1 => "0.135592438389592",
+  #   2 => "0.385846009631034",
+  #   3 => "0.478561551979374",
+  # }
+}
+
 # A example of the modules speed, or lack of.
 {
   use Graph;

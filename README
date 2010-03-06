@@ -20,7 +20,7 @@ DESCRIPTION
     "Graph::Centrality::Pagerank" computes the pagerank of the all nodes in
     a graph. The input can be a list of edges or a Graph.
     "Graph::Centrality::Pagerank" is written entirely in Perl and is not
-    meant for use in high performance applications.
+    recommended for use in high performance applications.
 
 CONSTRUCTOR
   "new"
@@ -119,6 +119,16 @@ METHOD
         "listOfNodes" is optional but, must be the list of nodes in the
         graph when provided; it defaults to all the nodes comprising the
         edges in "listOfEdges".
+
+    "nodeWeights"
+          nodeWeights => {}
+
+        "nodeWeights" is an optional hash reference that can provide a
+        weight for the nodes. If "nodeWeights" is not defined for any node
+        in the graph, then each node has a weight of
+        "1/scale(@listOfNodes)". If "nodeWeights" is defined for at least
+        one node in the graph, then the default weight of any undefined node
+        is zero.
 
 EXAMPLES
     A rather dull example with one node and no edges:
@@ -277,6 +287,29 @@ EXAMPLES
       # }
     }
 
+    An example of the effect of including node weights:
+
+      use Graph;
+      use Graph::Centrality::Pagerank;
+      use Data::Dump qw(dump);
+      my $ranker = Graph::Centrality::Pagerank->new();
+      my $listOfEdges = [[1,2],[2,3]];
+      dump $ranker->getPagerankOfNodes (listOfEdges => $listOfEdges);
+      dump $ranker->getPagerankOfNodes (listOfEdges => $listOfEdges,
+        nodeWeights => {2 => .9, 3 => .1 });
+
+      # dumps:
+      # {
+      #   1 => "0.184416783248514",
+      #   2 => "0.341171047056969",
+      #   3 => "0.474412169694517",
+      # }
+      # {
+      #   1 => "0.135592438389592",
+      #   2 => "0.385846009631034",
+      #   3 => "0.478561551979374",
+      # }
+
     A example of the modules speed, or lack of.
 
       use Graph::Centrality::Pagerank;
@@ -313,7 +346,7 @@ COPYRIGHT
     with this module.
 
 KEYWORDS
-    centrality measure, eigenvector, graph, network, pagerank
+    centrality measure, eigenvector centrality, graph, network, pagerank
 
 SEE ALSO
     Graph

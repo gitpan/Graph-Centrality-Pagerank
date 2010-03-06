@@ -12,4 +12,7 @@ Revision history for Perl module Graph::Centrality::Pagerank
 1.03 9 Dec 2009
     - Fixed bug with graphs having singleton nodes.
     - Add option to include listOfNodes.
+
+1.04 6 Mar 2010
+    - Added option to weight nodes.
  

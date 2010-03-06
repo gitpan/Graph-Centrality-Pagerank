@@ -9,7 +9,7 @@ use Data::Dump qw(dump);
 BEGIN {
     use Exporter ();
     use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
-    $VERSION     = '1.03';
+    $VERSION     = '1.04';
     @ISA         = qw(Exporter);
     @EXPORT      = qw();
     @EXPORT_OK   = qw();
@@ -39,7 +39,7 @@ C<Graph::Centrality::Pagerank> - Computes pagerank of all nodes in a graph.
 
 C<Graph::Centrality::Pagerank> computes the pagerank of the all nodes in a graph.
 The input can be a list of edges or a L<Graph>. C<Graph::Centrality::Pagerank> is
-written entirely in Perl and is not meant for use in high performance applications.
+written entirely in Perl and is not recommended for use in high performance applications.
 
 =head1 CONSTRUCTOR
 
@@ -277,8 +277,18 @@ pageranks of the nodes.
 
  listOfNodes => ['a',10, 'b']
 
-C<listOfNodes> is optional but, must be the list of nodes in the graph when provided; 
+C<listOfNodes> is optional but, must be the list of nodes in the graph when provided;
 it defaults to all the nodes comprising the edges in C<listOfEdges>.
+
+=item C<nodeWeights>
+
+  nodeWeights => {}
+
+C<nodeWeights> is an optional hash reference that can provide a weight for the
+nodes. If C<nodeWeights> is not defined for any node in the graph, then each
+node has a weight of C<1/scale(@listOfNodes)>. If C<nodeWeights> is defined for
+at least one node in the graph, then the default weight of any undefined
+node is zero.
 
 =back
 
@@ -377,7 +387,7 @@ sub _getPageranksOfNodesFromEdgeList
       $columnSum{$to} = 0;
     }
   };
-  
+
   # convert the list of edges into a row oriented matrix.
   foreach my $edge (@$listOfEdges)
   {
@@ -399,8 +409,8 @@ sub _getPageranksOfNodesFromEdgeList
       unless (exists ($columnSum{$node}))
       {
         $columnSum{$node} = 0;
-      }    
-    }  
+      }
+    }
   }
 
   # normalize the column sums of the matrix and find all node sinks.
@@ -426,12 +436,45 @@ sub _getPageranksOfNodesFromEdgeList
     }
   }
 
+  # get the list of all the nodes.
+  my @allNodes = keys %columnSum;
+
+  # get the total number of nodes.
+  my $totalNodes = @allNodes;
+
+  # get or make the nodeWeights vector.
+  my %nodeWeights;
+  %nodeWeights = %{$Parameters{nodeWeights}} if exists $Parameters{nodeWeights};
+
+  # ensure $nodeWeights is nonegative for all nodes.
+  my $sum = 0;
+  foreach my $node (@allNodes)
+  {
+    # if a value is not defined for a node, make it zero at first.
+    $nodeWeights{$node} = 0 unless exists $nodeWeights{$node};
+
+    # force values to be nonnegative.
+    $nodeWeights{$node} = -$nodeWeights{$node} if ($nodeWeights{$node} < 0);
+
+    # sum the positive values.
+    $sum += $nodeWeights{$node};
+  }
+
+  # ensure $nodeWeights sum to one.
+  if ($sum > 0)
+  {
+    foreach my $node (@allNodes) { $nodeWeights{$node} /= $sum; }
+  }
+  else
+  {
+    foreach my $node (@allNodes) { $nodeWeights{$node} = 1 / $totalNodes; }
+  }
+
+
   # initialize the pagerank vector;
   my $pagerank = {};
-  my @allNodes = keys %columnSum;
-  my $totalNodes = @allNodes;
   return $pagerank if ($totalNodes == 0);
-  foreach my $node (@allNodes) { $pagerank->{$node} = 1 / $totalNodes; }
+  foreach my $node (@allNodes) { $pagerank->{$node} = $nodeWeights{$node}; }
   my $newPageRank = {};
 
   # set the maximum number of iterations.
@@ -443,10 +486,10 @@ sub _getPageranksOfNodesFromEdgeList
     # first set the new page rank to the average pageranks times (1 - $dampeningFactor).
     if ($Parameters{scaleDampeningFactor})
     {
-      my $sum = 0;
-      foreach my $node (@allNodes) { $sum += $pagerank->{$node}; }
-      $sum *= (1 - $Parameters{dampeningFactor}) / $totalNodes;
-      foreach my $node (@allNodes) { $newPageRank->{$node} = $sum; }
+      #my $sum = 0;
+      #foreach my $node (@allNodes) { $sum += $pagerank->{$node}; }
+      #$sum *= (1 - $Parameters{dampeningFactor}) / $totalNodes;
+      foreach my $node (@allNodes) { $newPageRank->{$node} = (1 - $Parameters{dampeningFactor}) * $nodeWeights{$node}; }
     }
     else
     {
@@ -476,7 +519,7 @@ sub _getPageranksOfNodesFromEdgeList
       $newPageRank->{$rowNode} += $Parameters{dampeningFactor} * $sum;
     }
 
-    # normalize then swap pagerank vectors.
+    # normalize (for rounding error stability -- i hope) then swap pagerank vectors.
     _normalizeByNorm1 ($newPageRank, \@allNodes);
     ($pagerank, $newPageRank) = ($newPageRank, $pagerank);
 
@@ -502,7 +545,7 @@ sub _getPageranksOfNodesFromEdgeList
     last if (($error < $Parameters{maxRelError}) && ($iteration >= $Parameters{minIterations}));
   }
 
-  # normalize the pagerank vector.
+  # normalize the pagerank vector (for rounding error stability -- i hope).
   _normalizeByNorm1 ($pagerank, \@allNodes);
 
   return $pagerank;
@@ -697,6 +740,29 @@ An example of the effect of including edge weights:
   # }
 }
 
+An example of the effect of including node weights:
+
+  use Graph;
+  use Graph::Centrality::Pagerank;
+  use Data::Dump qw(dump);
+  my $ranker = Graph::Centrality::Pagerank->new();
+  my $listOfEdges = [[1,2],[2,3]];
+  dump $ranker->getPagerankOfNodes (listOfEdges => $listOfEdges);
+  dump $ranker->getPagerankOfNodes (listOfEdges => $listOfEdges,
+    nodeWeights => {2 => .9, 3 => .1 });
+
+  # dumps:
+  # {
+  #   1 => "0.184416783248514",
+  #   2 => "0.341171047056969",
+  #   3 => "0.474412169694517",
+  # }
+  # {
+  #   1 => "0.135592438389592",
+  #   2 => "0.385846009631034",
+  #   3 => "0.478561551979374",
+  # }
+
 A example of the modules speed, or lack of.
 
   use Graph::Centrality::Pagerank;
@@ -737,7 +803,7 @@ LICENSE file included with this module.
 
 =head1 KEYWORDS
 
-centrality measure, eigenvector, graph, network, pagerank
+centrality measure, eigenvector centrality, graph, network, pagerank
 
 =head1 SEE ALSO
 
@@ -749,6 +815,17 @@ centrality measure, eigenvector, graph, network, pagerank
 =end html
 
 L<Graph>
+
+=begin html
+
+<a href="http://en.wikipedia.org/wiki/Centrality">centrality measure</a>,
+<a href="http://en.wikipedia.org/wiki/Centrality#Eigenvector_centrality">eigenvector centrality</a>
+<a href="http://en.wikipedia.org/wiki/Graph_(mathematics)">graph</a>
+<a href="http://en.wikipedia.org/wiki/Network_theory">network</a>
+<a href="http://en.wikipedia.org/wiki/PageRank">pagerank</a>
+
+=end html
+
 
 =cut
 
