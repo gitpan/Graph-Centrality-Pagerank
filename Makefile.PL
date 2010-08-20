@@ -20,22 +20,22 @@ WriteMakefile(
                      'Data::Dump' => '1.14',
                      'Graph' => '0.91',
                     },
-    LICENSE      => 'perl', 
+    LICENSE      => 'perl',
 );
 __END__
 # Below are the automatically recommended values for PREREQ_PM.
     PREREQ_PM    => {
                      # list of core modules used:
-                     'Carp' => '1.08',
+                     'Carp' => '1.16',
                      'strict' => '1.04',
-                     'Test::More' => '0.94',
+                     'Test::More' => '0.96',
                      'vars' => '1.01',
-                     'warnings' => '1.06',
+                     'warnings' => '1.09',
 
                      # list of installed modules used:
-                     'Data::Dump' => '1.15',
-                     'Graph' => '0.91',
-                     'Graph::Centrality::Pagerank' => '1.02',
+                     'Data::Dump' => '1.17',
+                     'Graph' => '0.94',
+                     'Graph::Centrality::Pagerank' => '1.05',
 
                      # list of unknown modules used:
                      '5.006_000' => '0',

@@ -118,7 +118,7 @@ METHOD
 
         "listOfNodes" is optional but, must be the list of nodes in the
         graph when provided; it defaults to all the nodes comprising the
-        edges in "listOfEdges".
+        edges in "listOfEdges" or "graph".
 
     "nodeWeights"
           nodeWeights => {}
@@ -222,7 +222,7 @@ EXAMPLES
       # dumps:
       # { 1 => "0.33333333209157", 2 => "0.66666666790843" }
 
-    Below is the forth example in the paper. The result is different from
+    Below is the fourth example in the paper. The result is different from
     the paper since the starting vector for Graph::Centrality::Pagerank is
 
       { 1 => "0.2", 2 => "0.2", 3 => "0.2", 4 => "0.2", 5 => "0.2" }
@@ -333,6 +333,14 @@ INSTALLATION
       make install
 
     If you are on a windows box you should use 'nmake' rather than 'make'.
+
+BUGS
+    Please email bugs reports or feature requests to
+    "bug-graph-centrality-pagerank@rt.cpan.org", or through the web
+    interface at
+    <http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Graph-Centrality-Pageran
+    k>. The author will be notified and you can be automatically notified of
+    progress on the bug fix or feature request.
 
 AUTHOR
      Jeff Kubina<jeff.kubina@gmail.com>

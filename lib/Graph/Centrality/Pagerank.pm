@@ -9,7 +9,7 @@ use Data::Dump qw(dump);
 BEGIN {
     use Exporter ();
     use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
-    $VERSION     = '1.04';
+    $VERSION     = '1.05';
     @ISA         = qw(Exporter);
     @EXPORT      = qw();
     @EXPORT_OK   = qw();
@@ -278,7 +278,7 @@ pageranks of the nodes.
  listOfNodes => ['a',10, 'b']
 
 C<listOfNodes> is optional but, must be the list of nodes in the graph when provided;
-it defaults to all the nodes comprising the edges in C<listOfEdges>.
+it defaults to all the nodes comprising the edges in C<listOfEdges> or C<graph>.
 
 =item C<nodeWeights>
 
@@ -559,6 +559,7 @@ sub _normalizeByNorm1
   foreach my $node (@$indices) { $sum += $hashVector->{$node}; }
   $sum = 1 if ($sum == 0);
   foreach my $node (@$indices) { $hashVector->{$node} /= $sum; }
+  return 1;
 }
 
 # get the value of machine epsilon, sort of, really
@@ -674,7 +675,7 @@ C<linkSinkNodes> is set to one, the default value.
   # dumps:
   # { 1 => "0.33333333209157", 2 => "0.66666666790843" }
 
-Below is the forth example in the paper. The
+Below is the fourth example in the paper. The
 result is different from the paper since the starting vector for
 L<Graph::Centrality::Pagerank> is
 
@@ -738,7 +739,6 @@ An example of the effect of including edge weights:
   #   2 => "0.259740259292235",
   #   3 => "0.333333333333333",
   # }
-}
 
 An example of the effect of including node weights:
 
@@ -788,6 +788,12 @@ To install the module run the following commands:
 
 If you are on a windows box you should use 'nmake' rather than 'make'.
 
+=head1 BUGS
+
+Please email bugs reports or feature requests to C<bug-graph-centrality-pagerank@rt.cpan.org>, or through
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Graph-Centrality-Pagerank>.  The author
+will be notified and you can be automatically notified of progress on the bug fix or feature request.
+
 =head1 AUTHOR
 
  Jeff Kubina<jeff.kubina@gmail.com>
@@ -819,13 +825,12 @@ L<Graph>
 =begin html
 
 <a href="http://en.wikipedia.org/wiki/Centrality">centrality measure</a>,
-<a href="http://en.wikipedia.org/wiki/Centrality#Eigenvector_centrality">eigenvector centrality</a>
-<a href="http://en.wikipedia.org/wiki/Graph_(mathematics)">graph</a>
-<a href="http://en.wikipedia.org/wiki/Network_theory">network</a>
+<a href="http://en.wikipedia.org/wiki/Centrality#Eigenvector_centrality">eigenvector centrality</a>,
+<a href="http://en.wikipedia.org/wiki/Graph_(mathematics)">graph</a>,
+<a href="http://en.wikipedia.org/wiki/Network_theory">network</a>,
 <a href="http://en.wikipedia.org/wiki/PageRank">pagerank</a>
 
 =end html
-
 
 =cut
 

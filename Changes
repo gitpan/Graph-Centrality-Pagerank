@@ -15,4 +15,6 @@ Revision history for Perl module Graph::Centrality::Pagerank
 
 1.04 6 Mar 2010
     - Added option to weight nodes.
- 
+
+1.05 20 Aug 2010
+    - Minor improvements to the documentation.
